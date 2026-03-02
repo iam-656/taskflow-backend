@@ -83,7 +83,7 @@ def read_tasks(
     current_user: dict = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
-    query = select(Task)
+    query = select(Task).where(Task.assignee_id == current_user['id'])
     
     if workspace_id:
         query = query.where(Task.workspace_id == workspace_id)
@@ -99,7 +99,7 @@ def create_task(
 ):
     db_task = Task.from_orm(task)
     # Assign to current user (creator)
-    # db_task.assignee_id = current_user['id'] # Optional depending on logic
+    db_task.assignee_id = current_user['id']
 
     session.add(db_task)
     session.commit()
